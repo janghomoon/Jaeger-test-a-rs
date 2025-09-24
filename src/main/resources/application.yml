@@ -1,17 +1,28 @@
 spring:
   application:
-    name: Jaeger-test-a-rs
+    name: jaeger-test-b-rs
+
 server:
   port: 8080
 
-# ???? ??? ????? (?? ??)
 otel:
   exporter:
     otlp:
-      endpoint: http://localhost:4317
-
+      endpoint: http://localhost:4318
+  resource:
+    attributes:
+      service.name: jaeger-test-b-rs
+# (Spring Boot의 관리용 OTLP export 설정 — metrics 등)
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
   otlp:
     metrics:
-      export:
-        enabled: false
+      otlp:
+        enabled: true
+        url: http://otel-collector:4318/v1/metrics
+    # 로그 export는 별도 설정 및 의존성 필요 (아래 참조)
+
+

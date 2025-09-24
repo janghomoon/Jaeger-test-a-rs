@@ -6,7 +6,7 @@ plugins {
 
 group = 'kr.co'
 version = '0.0.1-SNAPSHOT'
-description = 'Jaeger-test-a-rs'
+description = 'jaeger-test-b-rs'
 
 java {
     toolchain {
@@ -24,12 +24,32 @@ repositories {
     mavenCentral()
 }
 
+dependencyManagement {
+    imports {
+        // OpenTelemetry Spring Starter 권장 BOM (버전 2.20.1)
+        mavenBom("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.20.1")
+    }
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Spring Boot Starter 방식(버전은 BOM이 관리)
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter'
+
+    // OTLP exporter (명시적으로 주면 확실). BOM이 맞춰주지만 명시 버전을 넣어도 됩니다.
+    implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.54.1'
+
+    // (옵션) Jaeger 전용 exporter를 사용하고 싶으면 추가
+//    implementation 'io.opentelemetry:opentelemetry-exporter-jaeger:1.34.1'
+
+    // Micrometer -> OTLP (metrics) (현재는 1.16.x 마일스톤 라인 사용되는 경우가 많음)
+    runtimeOnly 'io.micrometer:micrometer-registry-otlp:1.16.0-M3'
+
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'io.micrometer:micrometer-registry-otlp'
     annotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
