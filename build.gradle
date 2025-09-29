@@ -22,6 +22,7 @@ configurations {
 
 repositories {
     mavenCentral()
+
 }
 
 dependencyManagement {
@@ -35,11 +36,21 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+
+    implementation "io.opentelemetry:opentelemetry-exporter-otlp:1.34.1"
+    implementation "io.opentelemetry:opentelemetry-sdk-logs:1.34.1"
+    implementation "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure:1.34.1"
+
     // Spring Boot Starter 방식(버전은 BOM이 관리)
-    implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter'
+//    implementation 'io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter'
+
+    implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+    // Other dependencies for OpenTelemetry exporters (e.g., Zipkin, OTLP)
+    // implementation 'io.opentelemetry:opentelemetry-exporter-zipkin'
+    // implementation 'io.opentelemetry:opentelemetry-sdk-extension-autoconfigure' // If using autoconfig
 
     // OTLP exporter (명시적으로 주면 확실). BOM이 맞춰주지만 명시 버전을 넣어도 됩니다.
-    implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.54.1'
+//    implementation 'io.opentelemetry:opentelemetry-exporter-otlp:1.54.1'
 
     // (옵션) Jaeger 전용 exporter를 사용하고 싶으면 추가
 //    implementation 'io.opentelemetry:opentelemetry-exporter-jaeger:1.34.1'

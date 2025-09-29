@@ -2,27 +2,62 @@ spring:
   application:
     name: jaeger-test-b-rs
 
-server:
-  port: 8080
-
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0   # 100% 샘플링 (테스트용, 운영은 0.1 권장)
+    exporter:
+      otlp:
+        endpoint: http://localhost:4318
+        protocol: http/protobuf
+# OpenTelemetry 리소스 속성 (서비스명, 환경, 버전 등)
 otel:
-  exporter:
-    otlp:
-      endpoint: http://localhost:4318
   resource:
     attributes:
       service.name: jaeger-test-b-rs
-# (Spring Boot의 관리용 OTLP export 설정 — metrics 등)
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-  otlp:
-    metrics:
-      otlp:
-        enabled: true
-        url: http://otel-collector:4318/v1/metrics
-    # 로그 export는 별도 설정 및 의존성 필요 (아래 참조)
+      service.version: 0.0.1-SNAPSHOT
+      service.environment: local
+#
+#  metrics:
+#    export:
+#      otlp:
+#        enabled: true
+#        endpoint: http://localhost:4318/v1/metrics
+#        protocol: http/protobuf
+#  tracing:
+#    enabled: true
+#    # 📌 트레이스 데이터 엔드포인트 수정:
+#    # Host의 OTel Collector 포트(4318)로 직접 보냅니다.
+#    otel:
+#      exporter:
+#        otlp:
+#          endpoint: http://localhost:4318
+#
+##otel:
+##  exporter:
+##    otlp:
+##      endpoint: http://localhost:4318
+##  resource:
+##    attributes:
+##      service.name: jaeger-test-b-rs
+## (Spring Boot의 관리용 OTLP export 설정 — metrics 등)
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health,info,metrics,prometheus
+#  otlp:
+#    metrics:
+#      otlp:
+#        enabled: true
+#        # 📌 메트릭 데이터 엔드포인트 수정:
+#        # Host의 OTel Collector 포트(4318)로 직접 보냅니다.
+#        # /v1/metrics 경로는 OTLP 프로토콜의 표준 경로이므로 유지합니다.
+#        url: http://localhost:4318/v1/metrics
+#    # 로그 export는 별도 설정 및 의존성 필요
+
+server:
+  port: 8080
 
 
